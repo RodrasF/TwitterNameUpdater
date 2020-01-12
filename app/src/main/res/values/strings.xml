@@ -1,9 +1,7 @@
 <resources>
-    <string name="app_name">TwitterNameSwitcher</string>
+    <string name="app_name">TwitterNameUpdater</string>
     <string name="twitter_api_key">Y5W4AaWQK0gmJRT2qqzvmIisM</string>
     <string name="twitter_api_secret">GSV99LpGR89vLBonar7rN0u1wlOsNGfB8OpERVPbAQgTn0Dx2b</string>
     <string name="callback_url">twittersdk://</string>
-    <string name="shared_prefs">TwitterNameSwitcherSharedPreferences</string>
-    <string name="user_key">user_key</string>
-    <string name="user_secret">user_secret</string>
+    <string name="shared_prefs">TwitterNameUpdaterSharedPreferences</string>
 </resources>
