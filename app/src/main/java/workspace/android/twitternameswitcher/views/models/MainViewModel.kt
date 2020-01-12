@@ -1,6 +1,7 @@
 package workspace.android.twitternameswitcher.views.models
 
 import android.os.AsyncTask
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer
@@ -17,13 +18,11 @@ class MainViewModel(
     val repo : Repository
 ) : ViewModel() {
 
-    private val TAG = MainViewModel::class.java.simpleName
+    private val TAG = "MainViewModel"
 
-    lateinit var httpOauthConsumer: CommonsHttpOAuthConsumer
+    var httpOauthConsumer: CommonsHttpOAuthConsumer? = null
 
     private val currentName = MutableLiveData<String>()
-
-    lateinit var currentUser : JSONObject
 
     init {
         postName(null)
@@ -33,9 +32,28 @@ class MainViewModel(
         return currentName
     }
 
+    fun initConsumer(api_key: String, api_secret: String) {
+        val task = GetConsumerTask()
+        task.execute(api_key, api_secret)
+    }
+
+    inner class GetConsumerTask : AsyncTask<String?, Void, Void?>() {
+
+        override fun doInBackground(vararg params: String?) : Void? {
+            val apiKey = params[0]
+            val apiSecret = params[1]
+            httpOauthConsumer = CommonsHttpOAuthConsumer(apiKey, apiSecret)
+            return null
+        }
+    }
+
     fun postName(name : String?) {
-        val postNameTask = PostNameTask()
-        postNameTask.execute(name)
+        if(httpOauthConsumer == null){
+            Log.d(TAG, "Consumer equals null at post name")
+        }else {
+            val postNameTask = PostNameTask()
+            postNameTask.execute(name)
+        }
     }
 
     inner class PostNameTask : AsyncTask<String?, Void, JSONObject>() {
@@ -52,15 +70,14 @@ class MainViewModel(
             HttpProtocolParams.setUseExpectContinue(parameters, false)
             post.params = parameters
             // sign the request to authenticate
-            httpOauthConsumer.sign(post)
+            httpOauthConsumer?.sign(post)
             val responsex = httpClient.execute(post, BasicResponseHandler())
 
             return JSONObject(responsex)
         }
 
         override fun onPostExecute(result: JSONObject) {
-            currentName.value = result.getString("name")
-            currentUser = result
+            currentName.postValue(result.getString("name"))
         }
     }
 }

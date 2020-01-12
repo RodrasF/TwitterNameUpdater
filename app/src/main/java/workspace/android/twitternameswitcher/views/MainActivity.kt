@@ -5,7 +5,10 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 import androidx.lifecycle.Observer
 import android.graphics.BitmapFactory
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer
+import android.util.Log
+import com.squareup.picasso.Picasso
+import com.twitter.sdk.android.core.Twitter
+import com.twitter.sdk.android.core.TwitterCore
 import workspace.android.twitternameswitcher.views.models.MainViewModel
 import workspace.android.twitternameswitcher.R
 import workspace.android.twitternameswitcher.views.models.viewModel
@@ -14,7 +17,7 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = MainActivity::class.java.simpleName
+    private val TAG = "MainActivity"
 
     private lateinit var model : MainViewModel
 
@@ -23,8 +26,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         model = this.viewModel()
-        model.httpOauthConsumer = intent.getSerializableExtra("consumer") as CommonsHttpOAuthConsumer
-        loadImage()
+        model.initConsumer(resources.getString(R.string.twitter_api_key), resources.getString(R.string.twitter_api_secret))
+
+        val name = intent.getStringExtra("name")
+        model.liveCurrentName().postValue(name)
+        val picture = intent.getStringExtra("picture")
+        loadPicture(picture)
 
         model.liveCurrentName().observe(this, Observer<String> {
             current_name.text = it
@@ -39,15 +46,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         logout_button.setOnClickListener {
-            model.repo.logout()
             finish()
         }
     }
 
-    private fun loadImage() {
-        val url = URL(model.currentUser.getString("profile_image_url"))
-        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-        profile_picture.setImageBitmap(bmp)
+    private fun loadPicture(picture : String?) {
+        if(picture.isNullOrBlank()){
+            Log.d(TAG, "Picture is null")
+            return
+        }
+        Picasso.get().load(picture).into(profile_picture)
     }
 
 }
