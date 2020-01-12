@@ -12,13 +12,5 @@ class LoginViewModel(
 
     private val TAG = LoginViewModel::class.java.simpleName
 
-    private val loggedIn = MutableLiveData<Boolean>()
 
-    init{
-        //loggedIn.value = repo.isLoggedIn()
-    }
-
-    fun isLoggedIn(): MutableLiveData<Boolean>{
-        return loggedIn
-    }
 }

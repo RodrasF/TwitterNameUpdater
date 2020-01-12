@@ -6,15 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import com.twitter.sdk.android.core.*
 import com.twitter.sdk.android.core.models.User
-import workspace.android.twitternameswitcher.App
 import workspace.android.twitternameswitcher.R
 import workspace.android.twitternameswitcher.views.models.LoginViewModel
 import workspace.android.twitternameswitcher.views.models.viewModel
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.TwitterSession
 import kotlinx.android.synthetic.main.activity_login.*
-
-
 
 
 class LoginActivity : AppCompatActivity() {
@@ -25,13 +22,19 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val twitterSession = TwitterCore.getInstance().sessionManager.activeSession
+        if(twitterSession != null){
+            getTwitterData(twitterSession)
+        }
+
         setContentView(R.layout.activity_login)
         model = this.viewModel()
 
         login_button.callback = object : Callback<TwitterSession>() {
             override fun success(result: Result<TwitterSession>) {
                 // Do something with result, which provides a TwitterSession for making API calls
-                val newTwitterSession = result?.data
+                val newTwitterSession = result.data
                 Log.d("Twitter", "Success: Getting Twitter Data")
                 getTwitterData(newTwitterSession)
 
@@ -42,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.e("Twitter", "Failed to authenticate user " + exception.message)
             }
         }
-
     }
 
     private fun getTwitterData(twitterSession: TwitterSession?) {
