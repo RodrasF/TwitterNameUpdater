@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TwitterNameUpdater</string>
+    <string name="callback_url">twittersdk://</string>
+    <string name="shared_prefs">TwitterNameUpdaterSharedPreferences</string>
+</resources>
