@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         offline_button.setOnClickListener {
-            val name = live_text.text.toString()
+            val name = offline_text.text.toString()
             if(!isNameEmpty(name)){
                 model.postName(name)
             }
